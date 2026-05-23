@@ -2,6 +2,7 @@
 require "config.php";
 require "includes/header.php";
 
+
 // B.4 : Récupération des réservations avec JOIN
 $sql = "SELECT r.*, s.nom as service_nom 
         FROM reservations r 
