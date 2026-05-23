@@ -355,7 +355,6 @@ $services = [
           Votre coiffeur<br>
           <em>de confiance</em>
         </h1>
-        <p class="hero-desc"><?= htmlspecialchars($salon['description']) ?></p>
         <a href="#services" class="btn btn-rdv me-3">Voir les prestations</a>
         <a href="reservation.php" class="btn btn-rdv" style="background:var(--gold);">Prendre RDV</a>
       </div>
