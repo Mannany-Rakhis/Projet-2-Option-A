@@ -1,5 +1,7 @@
 
 <?php
+require 'database.php';
+$services = $pdo->query('SELECT * FROM services')->fetchAll();
 $salon = [
     'nom'         => 'ChauveQuiPeut',
     'slogan'      => 'On coupe vite, on coupe bien — même si vous fuyez !',
