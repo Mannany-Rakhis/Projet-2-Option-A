@@ -318,7 +318,7 @@
       136 av Alan Turling
       <span class="sep">·</span>
       <i class="ti ti-clock" aria-hidden="true"></i>
-      Lun–Sam : 9h–19h
+      Mar–Dim : 9h–19h
     </div>
     <div class="top-bar-right">
       <i class="ti ti-phone" aria-hidden="true"></i>
@@ -404,6 +404,3 @@
     }
   });
 </script>
-
-</body>
-</html>
