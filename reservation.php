@@ -2,11 +2,10 @@
 require "config.php";
 require "includes/header.php";
 
-
 // B.4 : Récupération des réservations avec JOIN
 $sql = "SELECT r.*, s.nom as service_nom 
         FROM reservations r 
-        LEFT JOIN services s ON r.service_id = s.id 
+        LEFT JOIN services s ON r.Id_services = s.Id_services 
         ORDER BY r.date_rdv DESC, r.heure_rdv DESC";
 $stmt = $pdo->query($sql);
 $reservations = $stmt->fetchAll();
@@ -18,7 +17,7 @@ $reservations = $stmt->fetchAll();
     <a href="ajouter-reservation.php" class="btn btn-success float-end">+ Nouvelle réservation</a>
 </h2>
 
-<!-- Message de suppression (bonus D.5) -->
+<!-- D.5 : Message de suppression -->
 <?php if (isset($_GET['supprime'])): ?>
     <div class="alert alert-success">Réservation supprimée avec succès.</div>
 <?php endif; ?>
@@ -45,16 +44,18 @@ $reservations = $stmt->fetchAll();
                 <td><?= htmlspecialchars($resa['nom_client']) ?></td>
                 <td><?= htmlspecialchars($resa['email_client']) ?></td>
                 <td><?= htmlspecialchars($resa['telephone']) ?></td>
-                <td><?= $resa['date_rdv'] ?></td>
-                <td><?= $resa['heure_rdv'] ?></td>
+                <td><?= htmlspecialchars($resa['date_rdv']) ?></td>
+                <td><?= htmlspecialchars($resa['heure_rdv']) ?></td>
                 <td><?= htmlspecialchars($resa['service_nom'] ?? 'Non défini') ?></td>
-                <td><span class="badge bg-<?= $resa['statut'] === 'annulé' ? 'danger' : 'success' ?>">
-                    <?= htmlspecialchars($resa['statut']) ?>
-                </span></td>
+                <td>
+                    <span class="badge bg-<?= $resa['statut'] === 'annulé' ? 'danger' : 'success' ?>">
+                        <?= htmlspecialchars($resa['statut']) ?>
+                    </span>
+                </td>
                 <td>
                     <!-- C.3 & D.2 : Liens UPDATE / DELETE -->
-                    <a href="modifier-reservation.php?id=<?= (int)$resa['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
-                    <a href="supprimer-reservation.php?id=<?= (int)$resa['id'] ?>" 
+                    <a href="modifier-reservation.php?id=<?= (int)$resa['Id_reservations'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                    <a href="supprimer-reservation.php?id=<?= (int)$resa['Id_reservations'] ?>" 
                        class="btn btn-sm btn-danger" 
                        onclick="return confirm('Supprimer cette réservation ?')">Supprimer</a>
                 </td>
