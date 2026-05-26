@@ -1,44 +1,48 @@
 <?php
-require "config.php";
-require "includes/header.php";
+require 'config.php';
 
 // B.4 : Récupération des réservations avec JOIN
 $sql = "SELECT r.*, s.nom as service_nom 
         FROM reservations r 
         LEFT JOIN services s ON r.Id_services = s.Id_services 
         ORDER BY r.date_rdv DESC, r.heure_rdv DESC";
-$stmt = $pdo->query($sql);
-$reservations = $stmt->fetchAll();
+$reservations = $pdo->query($sql)->fetchAll();
+
+$pageTitle = 'ChauveQuiPeut – Réservations';
+include 'includes/header.php';
 ?>
 
-<h2 class="mb-3">
+<main class="container py-5">
+  <h2 class="mb-3">
     Réservations
-    <!-- D.1 : Bouton vers ajout -->
     <a href="ajouter-reservation.php" class="btn btn-success float-end">+ Nouvelle réservation</a>
-</h2>
+  </h2>
 
 <!-- D.5 : Message de suppression -->
 <?php if (isset($_GET['supprime'])): ?>
     <div class="alert alert-success">Réservation supprimée avec succès.</div>
-<?php endif; ?>
+  <?php endif; ?>
+  <?php if (isset($_GET['modifie'])): ?>
+    <div class="alert alert-success">Réservation modifiée avec succès.</div>
+  <?php endif; ?>
 
-<?php if (empty($reservations)): ?>
+  <?php if (empty($reservations)): ?>
     <div class="alert alert-warning">Aucune réservation pour le moment.</div>
-<?php else: ?>
+  <?php else: ?>
     <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Client</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Service</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+      <thead class="table-dark">
+        <tr>
+          <th>Client</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Date</th>
+          <th>Heure</th>
+          <th>Service</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
         <?php foreach ($reservations as $resa): ?>
             <tr>
                 <td><?= htmlspecialchars($resa['nom_client']) ?></td>
@@ -61,8 +65,9 @@ $reservations = $stmt->fetchAll();
                 </td>
             </tr>
         <?php endforeach; ?>
-        </tbody>
+      </tbody>
     </table>
-<?php endif; ?>
+  <?php endif; ?>
+</main>
 
-<?php require "includes/footer.php"; ?>
+<?php include 'includes/footer.php'; ?>
