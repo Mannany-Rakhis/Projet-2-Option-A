@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>salon de coiffure</title>
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+        <main>
+             <!-- partie Hero -->
+            <section class="hero">
+                <div class="hero-tag">
+                    <p class="hero-eyebrow">coiffure · soins · Manucure </p>
+                </div>
+                <h1 class="hero-title">
+                    ChauffeQUIPEUT Réservez en beauté
+                <h1>    
+                <p class="hero-subtitle">Trouvez votre salon, prenez rendez-vous en ligne, confirmé immédiatement.</p>
+                <div class="hero-actions">  
+                     <a href="reservation.html" class="btn-primary">Réserver une coupe</a>   
+                     <a href="menu.html" class="btn-ghost">Découvrir nos coupes</a> 
+                </div>                 
+            </section>
+
+             <!-- partie histoire -->
+            <section class="slider-section">
+                <div class="slider-track">
+                    <div class="slide-card">
+                    <img src="https://res.cloudinary.com/planity/image/upload/f_auto,q_auto/v1701273308/portail/illustrations/HOMEPAGE/MAIN_2023/SLIDER/hair_care.jpg" alt="Coiffeur" />
+                    <div class="slide-label">Coiffeur</div>
+                    </div>
+                    <div class="slide-card">
+                    <img src="https://res.cloudinary.com/planity/image/upload/f_auto,q_auto/v1701273308/portail/illustrations/HOMEPAGE/MAIN_2023/SLIDER/barber_shop.jpg" alt="Barbier" />
+                    <div class="slide-label">Barbier</div>
+                    </div>
+                    <div class="slide-card">
+                    <img src="https://res.cloudinary.com/planity/image/upload/f_auto,q_auto/v1701273308/portail/illustrations/HOMEPAGE/MAIN_2023/SLIDER/nails.jpg" alt="Manucure" />
+                    <div class="slide-label">Manucure</div>
+                    </div>
+                    <div class="slide-card">
+                    <img src="https://res.cloudinary.com/planity/image/upload/f_auto,q_auto/v1701273308/portail/illustrations/HOMEPAGE/MAIN_2023/SLIDER/beauty_salon.jpg" alt="Institut de beauté" />
+                    <div class="slide-label">Institut de beauté</div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- avis -->
+            <section class="avis-section" id="avis">
+                  <div class="avis-header reveal">
+                       <p class="section-label">Ce qu'ils disent</p>
+                       <h2 class="section-title" style="color:var(--white)">Nos clients<br><em>témoignent</em></h2>
+                       <div class="divider center" style="background:rgba(201,168,76,0.4)"></div>
+                  </div>
+                  <div class="avis-track-outer reveal">
+                       <div class="avis-track" id="avisTrack"> 
+                          <!-- Cards doubled for seamless loop -->
+                       </div>
+                  </div>
+            </section> 
+            <!--présentation produit-->
+            <section class="produit-section" id="produit">
+                <div class="produit-header">
+                    <p class="section-label">Nos suggestions</p>
+                    <h2 class="section-title">vous voulez vous refaire une béauté par un professionnels!
+                        reservé un rendez-vous en ligne en un click.
+                    </h2>
+                </div>
+                <div class="produit-reveal">
+                    <div class="menu-item"><span class="menu-item-name">Velouté de potimarron, crème de chèvre</span><span class="menu-item-price">9 €</span></div>
+                    <div class="menu-item"><span class="menu-item-name">Tartare de saumon, avocat, citron vert</span><span class="menu-item-price">13 €</span></div>
+                    <div class="menu-item"><span class="menu-item-name">Salade de gésiers confits, noix, magret fumé</span><span class="menu-item-price">12 €</span></div>
+                    <div class="menu-item"><span class="menu-item-name">Foie gras de canard maison, chutney de figues</span><span class="menu-item-price">16 €</span></div>
+                    <div class="menu-item"><span class="menu-item-name">Velouté de potimarron, crème de chèvre</span><span class="menu-item-price">9 €</span></div>
+                    <div class="menu-item"><span class="menu-item-name">Tartare de saumon, avocat, citron vert</span><span class="menu-item-price">13 €</span></div>
+                </div>
+    </div>
+            </section>
+
+        </main>
+</body>
+<script>
+        /* ─── Avis carousel ─── */
+        
+    const avis = [
+      { text: "Une cuisine d'une générosité rare. La côte de bœuf était tout simplement parfaite, et le service d'une discrétion exemplaire. Je recommande les yeux fermés.", author: "Marie-Claire D.", stars: 5 },
+      { text: "Dîner d'anniversaire magique. Le chef a personnalisé le menu, l'équipe a été aux petits soins toute la soirée. On reviendra pour chaque occasion spéciale.", author: "Thomas & Julie", stars: 5 },
+      { text: "Le foie gras maison est un incontournable. L'ambiance chaleureuse, le décor soigné... c'est exactement ce qu'on attend d'un grand bistrot français.", author: "Bernard L.", stars: 5 },
+      { text: "Repas de groupe pour 20 personnes, organisation impeccable. Le menu tout compris était d'un excellent rapport qualité-prix. Merci à toute l'équipe !", author: "Sylvie M.", stars: 5 },
+      { text: "Enfin un restaurant où l'on prend le temps. Chaque assiette est travaillée avec amour, les vins sont bien conseillés. Un vrai bijou du nord.", author: "Antoine R.", stars: 5 },
+      { text: "Le bar en croûte d'herbes était divin. Service rapide sans être précipité. La salle est agréable, lumineuse. On se sent vraiment bien ici.", author: "Caroline F.", stars: 4 },
+      { text: "Séminaire d'entreprise très réussi. Cadre parfait, repas raffiné, équipe à l'écoute. Un grand merci à Djamel et son équipe pour leur professionnalisme.", author: "Jean-Paul V.", stars: 5 },
+      { text: "Le moelleux au chocolat… On n'en parle plus, on y retourne juste pour ça. Et pour le reste aussi, évidemment !", author: "Isabelle T.", stars: 5 },
+    ];
+ 
+    const track = document.getElementById('avisTrack');
+    const allAvis = [...avis, ...avis]; // double pour boucle infinie
+ 
+    allAvis.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'avis-card';
+      card.innerHTML = `
+        <div class="stars">${'★'.repeat(a.stars)}${'☆'.repeat(5 - a.stars)}</div>
+        <p class="avis-text">"${a.text}"</p>
+        <p class="avis-author">${a.author}</p>
+      `;
+      track.appendChild(card);
+    });
+ 
+</script>
+</html>

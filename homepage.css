@@ -1,0 +1,212 @@
+/*── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:      #F5F0E8;
+      --cream-dark: #EDE5D4;
+      --brown:      #3B2A1A;
+      --brown-mid:  #6B4C30;
+      --gold:       #C9A84C;
+      --gold-light: #E8C97A;
+      --charcoal:   #1C1C1C;
+      --white:      #FDFAF5;
+      --text-muted: #7A6A58;
+      --border:     #e8e8f0;
+      --nav-h:      80px;
+      --shadow: 0 4px 24px rgba(0,0,0,.10);
+      --radius: 12px;
+      --font-display: 'Playfair Display', serif;
+    }
+ body {
+      font-family: 'Jost','Nunito', sans-serif;
+      background: var(--white);
+      color: var(--brown);
+      overflow-x: hidden;
+    }
+
+        /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d2d5a 50%, #e85d4a22 100%);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('salon_coiffure.jpg') center/cover no-repeat;
+    }
+    .hero-tag {
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .3rem .9rem;
+      border-radius: 30px;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: .7rem;
+      position: relative;
+    }
+    .hero-subtitle {
+      color: rgba(255,255,255,.65);
+      font-size: 1.05rem;
+      margin-bottom: 2.2rem;
+      position: relative;
+      letter-spacing: .04em;
+    }
+        .hero-actions {
+      display: flex; gap: 1.2rem;
+      align-items: center; justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s 1.1s forwards;
+    }
+ 
+    .btn-primary {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1em 2.8em;
+      background: var(--gold);
+      color: var(--brown);
+      border: 1px solid var(--gold);
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: transparent; color: var(--gold-light); transform: translateY(-2px); }
+ 
+    .btn-ghost {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1em 2.4em;
+      color: rgba(253,250,245,0.8);
+      border: 1px solid rgba(253,250,245,0.3);
+      transition: border-color 0.3s, color 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); }
+ 
+ 
+    /* ===== partie histoire===== */
+.slider-section {
+      padding: 2.5rem 2.5rem 1.5rem;
+      background: var(--white);
+    }
+    .slider-track {
+      display: flex;
+      justify-content: space-around;
+      gap: 1.1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: .5rem;
+    }
+    .slider-track::-webkit-scrollbar { display: none; }
+    .slide-card {
+      flex: 0 0 300px;
+      scroll-snap-align: start;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4/5;
+      cursor: pointer;
+      transition: transform .3s;
+    }
+    .slide-card:hover { transform: scale(1.03); }
+    .slide-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .slide-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: .7rem .9rem;
+      background: linear-gradient(transparent, rgba(0,0,0,.72));
+      color: #fff;
+      font-size: .88rem;
+      font-weight: 700;
+    }
+
+        /* ── Avis ── */
+    .avis-section {
+      background: var(--brown);
+      padding: 7rem 5vw;
+      overflow: hidden;
+    }
+    .avis-section .section-title { color: var(--white); }
+    .avis-section .section-label { color: var(--gold); }
+    .avis-section .divider { background: rgba(201,168,76,0.4); }
+ 
+    .avis-header { text-align: center; margin-bottom: 1rem; }
+ 
+    .avis-track-outer {
+      overflow: hidden;
+      position: relative;
+    }
+    .avis-track-outer::before,
+    .avis-track-outer::after {
+      content: '';
+      position: absolute; top: 0; bottom: 0;
+      width: 80px; z-index: 2;
+      pointer-events: none;
+    }
+    .avis-track-outer::before { left: 0; background: linear-gradient(to right, var(--brown), transparent); }
+    .avis-track-outer::after  { right: 0; background: linear-gradient(to left,  var(--brown), transparent); }
+ 
+    .avis-track {
+      display: flex; gap: 1.5rem;
+      animation: scrollAvis 30s linear infinite;
+      width: max-content;
+    }
+    .avis-track:hover { animation-play-state: paused; }
+ 
+    .avis-card {
+      background: rgba(253,250,245,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 1rem;
+      width: 320px;
+      flex-shrink: 0;
+    }
+    .stars { color: var(--gold); font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .avis-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(253,250,245,0.75);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+    .avis-author {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+}
