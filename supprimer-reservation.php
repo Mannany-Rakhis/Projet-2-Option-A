@@ -10,7 +10,7 @@ if ($id > 0) {
     // ⚠️ SÉCURITÉ OBLIGATOIRE :
     // - Requête préparée (évite injection SQL)
     // - WHERE obligatoire (évite de vider toute la table)
-    $stmt = $pdo->prepare("DELETE FROM reservations WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM reservations WHERE Id_reservations = ?");
     $stmt->execute([$id]);
 }
 
