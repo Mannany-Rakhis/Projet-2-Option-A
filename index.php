@@ -65,7 +65,7 @@ $services = [
     ],
 ];
 ?>
-<?php include 'header.php'; ?>
+<?php include 'includes/header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -491,6 +491,10 @@ $services = [
   </div>
 </section>
 </section>
+<<<<<<< HEAD
+=======
+<?php include 'includes/footer.php'; ?>
+>>>>>>> main
 </body>
 <?php include 'footer.php'; ?>
 </html>

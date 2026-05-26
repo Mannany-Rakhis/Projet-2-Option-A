@@ -5,7 +5,7 @@ require "header.php";
 // B.4 : Récupération des réservations avec JOIN
 $sql = "SELECT r.*, s.nom as service_nom 
         FROM reservations r 
-        LEFT JOIN services s ON r.service_id = s.id 
+        LEFT JOIN services s ON r.Id_services = s.Id_services
         ORDER BY r.date_rdv DESC, r.heure_rdv DESC";
 $stmt = $pdo->query($sql);
 $reservations = $stmt->fetchAll();
