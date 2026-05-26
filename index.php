@@ -1,6 +1,6 @@
 
 <?php
-require 'database.php';
+require 'config.php';
 $services = $pdo->query('SELECT * FROM services')->fetchAll();
 $salon = [
     'nom'         => 'ChauveQuiPeut',
@@ -491,6 +491,10 @@ $services = [
   </div>
 </section>
 </section>
+<<<<<<< HEAD
+=======
 <?php include 'includes/footer.php'; ?>
+>>>>>>> main
 </body>
+<?php include 'footer.php'; ?>
 </html>

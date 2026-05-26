@@ -1,6 +1,6 @@
 <?php
 require "config.php";
-require "includes/header.php";
+require "header.php";
 
 // B.4 : Récupération des réservations avec JOIN
 $sql = "SELECT r.*, s.nom as service_nom 
@@ -63,4 +63,4 @@ $reservations = $stmt->fetchAll();
     </table>
 <?php endif; ?>
 
-<?php require "includes/footer.php"; ?>
+<?php require "footer.php"; ?>
