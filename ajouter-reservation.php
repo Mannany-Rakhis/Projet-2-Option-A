@@ -1,364 +1,164 @@
 <?php
-require "config.php";
-require "includes/header.php";
+require 'config.php';
 
-// Récupération des services pour le select
-$services = $pdo->query("SELECT Id_services, nom, duree_minutes, prix_euros FROM services ORDER BY nom")->fetchAll();
+// Initialisation des variables pour le formulaire
+$date_rdv          = '';
+$heure_rdv         = '';
+$nom_client        = '';
+$email_client      = '';
+$telephone         = '';
+$statut            = 'en_attente';
+$Id_services       = 0;
+$Id_disponibilites = 0;
 
 $erreurs = [];
-$success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Nettoyage et récupération des données reçues
+    $date_rdv          = trim($_POST['date_rdv'] ?? '');
+    $heure_rdv         = trim($_POST['heure_rdv'] ?? '');
+    $nom_client        = trim($_POST['nom_client'] ?? '');
+    $email_client      = trim($_POST['email_client'] ?? '');
+    $telephone         = trim($_POST['telephone'] ?? '');
+    $statut            = trim($_POST['statut'] ?? '');
+    $Id_services       = (int) ($_POST['Id_services'] ?? 0);
+    $Id_disponibilites = (int) ($_POST['Id_disponibilites'] ?? 0);
 
-    $nom_client   = trim($_POST['nom_client'] ?? '');
-    $email_client = trim($_POST['email_client'] ?? '');
-    $telephone    = trim($_POST['telephone'] ?? '');
-    $date_rdv     = $_POST['date_rdv'] ?? '';
-    $heure_rdv    = $_POST['heure_rdv'] ?? '';
-    $Id_services  = (int)($_POST['Id_services'] ?? 0);
+    $statuts_valides = ['en_attente', 'confirmé', 'annulé'];
 
-    if (empty($nom_client))    $erreurs[] = "Le nom est obligatoire.";
-    if (empty($email_client) || !filter_var($email_client, FILTER_VALIDATE_EMAIL))
-                                $erreurs[] = "L'email est invalide.";
-    if (empty($telephone))     $erreurs[] = "Le téléphone est obligatoire.";
-    if (empty($date_rdv))      $erreurs[] = "La date est obligatoire.";
-    if (empty($heure_rdv))     $erreurs[] = "L'heure est obligatoire.";
-    if ($Id_services <= 0)     $erreurs[] = "Veuillez choisir un service.";
+    // Validations de sécurité côté serveur
+    if ($date_rdv === '')                                  $erreurs[] = "La date est obligatoire.";
+    if ($heure_rdv === '')                                 $erreurs[] = "L'heure est obligatoire.";
+    if ($nom_client === '')                                $erreurs[] = "Le nom est obligatoire.";
+    if (!filter_var($email_client, FILTER_VALIDATE_EMAIL)) $erreurs[] = "Email invalide.";
+    if (!preg_match('/^\d{10}$/', $telephone))             $erreurs[] = "Le téléphone doit faire 10 chiffres.";
+    if (!in_array($statut, $statuts_valides, true))        $erreurs[] = "Statut invalide.";
+    if ($Id_services <= 0)                                 $erreurs[] = "Service requis.";
+    if ($Id_disponibilites <= 0)                           $erreurs[] = "Disponibilité requise.";
 
-    if (!empty($date_rdv) && $date_rdv < date('Y-m-d')) {
-        $erreurs[] = "La date ne peut pas être dans le passé.";
-    }
-
-    if (empty($erreurs)) {
-        $check = $pdo->prepare("SELECT COUNT(*) FROM reservations WHERE date_rdv = ? AND heure_rdv = ?");
-        $check->execute([$date_rdv, $heure_rdv]);
-        if ($check->fetchColumn() > 0) {
-            $erreurs[] = "Ce créneau est déjà réservé. Choisissez un autre horaire.";
-        }
-    }
-
-    if (empty($erreurs)) {
-        $stmt = $pdo->prepare("
-            INSERT INTO reservations (nom_client, email_client, telephone, date_rdv, heure_rdv, Id_services, statut)
-            VALUES (?, ?, ?, ?, ?, ?, 'en_attente')
-        ");
-        $stmt->execute([$nom_client, $email_client, $telephone, $date_rdv, $heure_rdv, $Id_services]);
-        $success = true;
+    // Insertion en base de données si aucune erreur
+    if (!$erreurs) {
+        $stmt = $pdo->prepare(
+            "INSERT INTO reservations 
+            (date_rdv, heure_rdv, nom_client, email_client, telephone, statut, Id_services, Id_disponibilites)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+        $stmt->execute([
+            $date_rdv, $heure_rdv, $nom_client, $email_client,
+            $telephone, $statut, $Id_services, $Id_disponibilites
+        ]);
+        
+        header('Location: reservations.php?cree=1');
+        exit;
     }
 }
+
+// Chargement des listes pour les éléments du formulaire
+$services = $pdo->query("SELECT Id_services, nom FROM services ORDER BY nom")->fetchAll();
+
+// On ne filtre que les créneaux actifs pour la création
+$disponibilites = $pdo->query(
+    "SELECT Id_disponibilites, jour_semaine, heure_debut, heure_fin, actif 
+     FROM disponibilites 
+     WHERE actif = 1 
+     ORDER BY Id_disponibilites"
+)->fetchAll();
+
+$pageTitle = 'ChauveQuiPeut – Nouvelle réservation';
+include 'includes/header.php';
 ?>
 
-<style>
-  .resa-wrapper {
-    min-height: calc(100vh - 200px);
-    background: #f0ebe4;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 60px 20px;
-  }
+<main class="container py-5" style="max-width: 720px;">
+  <h2 class="mb-4">Nouvelle réservation</h2>
 
-  .resa-card {
-    background: #faf8f5;
-    width: 100%;
-    max-width: 620px;
-    border: 1px solid #e8e0d5;
-    padding: 52px 48px;
-  }
+  <?php if ($erreurs): ?>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <?php foreach ($erreurs as $e): ?>
+          <li><?= htmlspecialchars($e) ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  <?php endif; ?>
 
-  .resa-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #8a6f50;
-    margin-bottom: 10px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 400;
-  }
-
-  .resa-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 36px;
-    font-weight: 400;
-    color: #2c2218;
-    line-height: 1.15;
-    margin-bottom: 8px;
-  }
-
-  .resa-subtitle {
-    font-size: 13px;
-    color: #7a6a5a;
-    font-weight: 300;
-    margin-bottom: 40px;
-    line-height: 1.6;
-  }
-
-  .resa-divider {
-    width: 40px;
-    height: 1px;
-    background: #8a6f50;
-    margin-bottom: 40px;
-  }
-
-  .resa-section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #8a6f50;
-    margin-bottom: 20px;
-    margin-top: 36px;
-    font-family: 'Jost', sans-serif;
-  }
-
-  .resa-section-label:first-of-type {
-    margin-top: 0;
-  }
-
-  .resa-field {
-    margin-bottom: 20px;
-  }
-
-  .resa-field label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #7a6a5a;
-    margin-bottom: 8px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 400;
-  }
-
-  .resa-field input,
-  .resa-field select {
-    width: 100%;
-    border: 1px solid #e8e0d5;
-    border-radius: 0;
-    background: #fff;
-    padding: 12px 16px;
-    font-family: 'Jost', sans-serif;
-    font-size: 14px;
-    color: #2c2218;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  .resa-field input:focus,
-  .resa-field select:focus {
-    border-color: #8a6f50;
-  }
-
-  .resa-field input::placeholder {
-    color: #b8a898;
-  }
-
-  .select-wrapper {
-    position: relative;
-  }
-
-  .select-wrapper::after {
-    content: '↓';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #8a6f50;
-    font-size: 13px;
-    pointer-events: none;
-  }
-
-  .resa-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .resa-alert-error {
-    background: #fdf0f0;
-    border: 1px solid #e8c5c5;
-    padding: 16px 20px;
-    margin-bottom: 28px;
-    font-size: 13px;
-    color: #8b3a3a;
-  }
-
-  .resa-alert-error ul {
-    margin: 0;
-    padding-left: 16px;
-  }
-
-  .resa-alert-success {
-    background: #f0f5f0;
-    border: 1px solid #c5d8c5;
-    padding: 40px 24px;
-    text-align: center;
-  }
-
-  .resa-alert-success .success-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-    color: #5a8a5a;
-  }
-
-  .resa-alert-success p {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    color: #2c2218;
-    margin-bottom: 6px;
-  }
-
-  .resa-alert-success span {
-    font-size: 13px;
-    color: #7a6a5a;
-  }
-
-  .resa-alert-success a {
-    color: #8a6f50;
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-top: 20px;
-    border-bottom: 1px solid #c9b89a;
-    padding-bottom: 2px;
-  }
-
-  .btn-resa-submit {
-    background: #2c2218;
-    color: #f0ebe4;
-    border: none;
-    padding: 15px 40px;
-    font-family: 'Jost', sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-    margin-top: 12px;
-  }
-
-  .btn-resa-submit:hover {
-    background: #8a6f50;
-  }
-
-  .btn-resa-cancel {
-    display: block;
-    text-align: center;
-    margin-top: 14px;
-    font-size: 12px;
-    color: #7a6a5a;
-    text-decoration: none;
-    letter-spacing: 0.08em;
-  }
-
-  .btn-resa-cancel:hover {
-    color: #2c2218;
-  }
-
-  @media (max-width: 600px) {
-    .resa-card { padding: 36px 24px; }
-    .resa-row { grid-template-columns: 1fr; }
-  }
-</style>
-
-<div class="resa-wrapper">
-  <div class="resa-card">
-
-    <div class="resa-eyebrow">Salon ChauveQuiPeut</div>
-    <h1 class="resa-title">Prendre rendez-vous</h1>
-    <p class="resa-subtitle">Remplissez le formulaire ci-dessous et nous confirmerons votre réservation dans les plus brefs délais.</p>
-    <div class="resa-divider"></div>
-
-    <?php if ($success): ?>
-      <div class="resa-alert-success">
-        <div class="success-icon">✓</div>
-        <p>Réservation enregistrée</p>
-        <span>Vous recevrez une confirmation prochainement.</span><br>
-        <a href="reservations.php">Voir toutes les réservations</a>
+  <form method="post" novalidate>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="date_rdv" class="form-label">Date</label>
+        <input type="date" id="date_rdv" name="date_rdv" class="form-control"
+               value="<?= htmlspecialchars($date_rdv) ?>" required>
+      </div>
+      <div class="col-md-6">
+        <label for="heure_rdv" class="form-label">Heure</label>
+        <input type="time" id="heure_rdv" name="heure_rdv" class="form-control"
+               value="<?= htmlspecialchars(substr($heure_rdv, 0, 5)) ?>" required>
       </div>
 
-    <?php else: ?>
+      <div class="col-md-6">
+        <label for="nom_client" class="form-label">Nom du client</label>
+        <input type="text" id="nom_client" name="nom_client" class="form-control"
+               value="<?= htmlspecialchars($nom_client) ?>" maxlength="50" required>
+      </div>
+      <div class="col-md-6">
+        <label for="telephone" class="form-label">Téléphone (10 chiffres)</label>
+        <input type="tel" id="telephone" name="telephone" class="form-control"
+               value="<?= htmlspecialchars($telephone) ?>" pattern="\d{10}" maxlength="10" required>
+      </div>
 
-      <?php if (!empty($erreurs)): ?>
-        <div class="resa-alert-error">
-          <ul>
-            <?php foreach ($erreurs as $e): ?>
-              <li><?= htmlspecialchars($e) ?></li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      <?php endif; ?>
+      <div class="col-12">
+        <label for="email_client" class="form-label">Email</label>
+        <input type="email" id="email_client" name="email_client" class="form-control"
+               value="<?= htmlspecialchars($email_client) ?>" maxlength="255" required>
+      </div>
 
-      <form method="POST" action="">
+      <div class="col-md-6">
+        <label for="Id_services" class="form-label">Service</label>
+        <select id="Id_services" name="Id_services" class="form-select" required>
+          <option value="">-- Choisir un service --</option>
+          <?php foreach ($services as $s): ?>
+            <option value="<?= (int) $s['Id_services'] ?>"
+              <?= ((int) $s['Id_services'] === $Id_services) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($s['nom']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
 
-        <div class="resa-section-label">Vos informations</div>
+      <div class="col-md-6">
+        <label for="Id_disponibilites" class="form-label">Créneau (jour)</label>
+        <select id="Id_disponibilites" name="Id_disponibilites" class="form-select" required>
+          <option value="">-- Choisir un créneau --</option>
+          <?php foreach ($disponibilites as $d): ?>
+            <option value="<?= (int) $d['Id_disponibilites'] ?>"
+              <?= ((int) $d['Id_disponibilites'] === $Id_disponibilites) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($d['jour_semaine']) ?>
+              <?php if ($d['actif'] && $d['heure_fin']): ?>
+                (<?= htmlspecialchars(substr($d['heure_debut'], 0, 5)) ?>–<?= htmlspecialchars(substr($d['heure_fin'], 0, 5)) ?>)
+              <?php else: ?>
+                (fermé)
+              <?php endif; ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
 
-        <div class="resa-field">
-          <label for="nom_client">Nom complet</label>
-          <input type="text" id="nom_client" name="nom_client"
-                 placeholder="Jean Dupont"
-                 value="<?= htmlspecialchars($_POST['nom_client'] ?? '') ?>" required>
-        </div>
+      <div class="col-md-6">
+        <label for="statut" class="form-label">Statut</label>
+        <select id="statut" name="statut" class="form-select" required>
+          <?php foreach (['en_attente', 'confirmé', 'annulé'] as $st): ?>
+            <option value="<?= htmlspecialchars($st) ?>" <?= $statut === $st ? 'selected' : '' ?>>
+              <?= htmlspecialchars($st) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
 
-        <div class="resa-row">
-          <div class="resa-field">
-            <label for="email_client">Email</label>
-            <input type="email" id="email_client" name="email_client"
-                   placeholder="jean@email.com"
-                   value="<?= htmlspecialchars($_POST['email_client'] ?? '') ?>" required>
-          </div>
-          <div class="resa-field">
-            <label for="telephone">Téléphone</label>
-            <input type="tel" id="telephone" name="telephone"
-                   placeholder="0612345678"
-                   value="<?= htmlspecialchars($_POST['telephone'] ?? '') ?>" required>
-          </div>
-        </div>
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary">Créer la réservation</button>
+      <a href="reservations.php" class="btn btn-secondary">Annuler</a>
+    </div>
+  </form>
+</main>
 
-        <div class="resa-section-label">Votre rendez-vous</div>
-
-        <div class="resa-field">
-          <label for="Id_services">Service souhaité</label>
-          <div class="select-wrapper">
-            <select id="Id_services" name="Id_services" required>
-              <option value="">-- Choisir un service --</option>
-              <?php foreach ($services as $s): ?>
-                <option value="<?= $s['Id_services'] ?>"
-                  <?= (isset($_POST['Id_services']) && $_POST['Id_services'] == $s['Id_services']) ? 'selected' : '' ?>>
-                  <?= htmlspecialchars($s['nom']) ?> — <?= $s['duree_minutes'] ?>min — <?= $s['prix_euros'] ?>€
-                </option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-        </div>
-
-        <div class="resa-row">
-          <div class="resa-field">
-            <label for="date_rdv">Date</label>
-            <input type="date" id="date_rdv" name="date_rdv"
-                   min="<?= date('Y-m-d') ?>"
-                   value="<?= htmlspecialchars($_POST['date_rdv'] ?? '') ?>" required>
-          </div>
-          <div class="resa-field">
-            <label for="heure_rdv">Heure</label>
-            <input type="time" id="heure_rdv" name="heure_rdv"
-                   min="09:00" max="19:00"
-                   value="<?= htmlspecialchars($_POST['heure_rdv'] ?? '') ?>" required>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-resa-submit">Confirmer la réservation</button>
-        <a href="reservations.php" class="btn-resa-cancel">Annuler</a>
-
-      </form>
-    <?php endif; ?>
-
-  </div>
-</div>
-
-<?php require "includes/footer.php"; ?>
+<?php include 'includes/footer.php'; ?>
