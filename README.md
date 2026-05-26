@@ -111,7 +111,7 @@ PDO est configuré en **`ERRMODE_EXCEPTION`** + **`FETCH_ASSOC`** (les requêtes
 │   └── contact.css             # Styles de la page contact
 └── includes/
     ├── header.php              # <head>, navigation, top-bar
-    └── footer.php              # Footer + scripts
+    └── footer.php              # Footer + scripts 
 ```
 
 ---
