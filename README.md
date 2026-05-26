@@ -7,21 +7,28 @@ Stack : **PHP 8** + **PDO** + **MariaDB / MySQL**, sans framework.
 
 ## 1. Pré-requis
 
-- PHP ≥ 8.0
-- MariaDB ≥ 10 (ou MySQL ≥ 5.7)
+- **XAMPP** (Apache + MySQL + PHP ≥ 8.0)
+- **phpMyAdmin** (fourni avec XAMPP)
 
-### Démarrer la base (macOS / Homebrew)
+### Démarrer Apache et MySQL
 
-```bash
-brew install mariadb
-brew services start mariadb
-```
+1. Ouvrir le **XAMPP Control Panel**.
+2. Cliquer sur **Start** à côté de **Apache** *et* de **MySQL**.
 
-### Créer la base et les tables
+### Placer le projet dans XAMPP
 
-```bash
-mysql -u root salon-coiffure < schema.sql   # ou copier-coller le SQL ci-dessous
-```
+Copier le dossier du projet dans `htdocs` de XAMPP :
+
+- Windows : `C:\xampp\htdocs\salon-coiffure\`
+- macOS   : `/Applications/XAMPP/htdocs/salon-coiffure/`
+
+### Créer la base via phpMyAdmin
+
+1. Ouvrir [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
+2. Cliquer sur l'onglet **Nouvelle base de données**.
+3. Nom : `salon-coiffure` — Interclassement : `utf8mb4_unicode_ci` — **Créer**.
+4. Sélectionner la base `salon-coiffure` dans la barre de gauche.
+5. Onglet **SQL** → coller le schéma ci-dessous → **Exécuter**.
 
 Schéma minimal :
 
@@ -62,15 +69,13 @@ CREATE TABLE reservations (
 );
 ```
 
-### Lancer le serveur
+### Lancer le projet
 
-Depuis la racine du projet :
+Une fois Apache et MySQL démarrés dans le XAMPP Control Panel, ouvrir :
 
-```bash
-php -S localhost:8000
-```
+[http://localhost/salon-coiffure/](http://localhost/salon-coiffure/)
 
-Puis ouvrir [http://localhost:8000](http://localhost:8000).
+(adapter le segment d'URL au nom du dossier copié dans `htdocs`).
 
 ---
 
