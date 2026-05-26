@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-
+$services = $pdo->query('SELECT * FROM services')->fetchAll();
 $salon = [
     'nom'         => 'ChauveQuiPeut',
     'slogan'      => 'On coupe vite, on coupe bien — même si vous fuyez !',
@@ -75,9 +75,8 @@ include 'includes/header.php';
           Votre coiffeur<br>
           <em>de confiance</em>
         </h1>
-        <p class="hero-desc"><?= htmlspecialchars($salon['description']) ?></p>
-        <a href="#services" class="btn-rdv">Voir les prestations</a>
-        <a href="reservations.php" class="btn-rdv" style="background:var(--gold); margin-left:12px;">Prendre RDV</a>
+        <a href="#services" class="btn btn-rdv me-3">Voir les prestations</a>
+        <a href="ajouter-reservation.php" class="btn btn-rdv" style="background:var(--gold);">Prendre RDV</a>
       </div>
       <div class="col-lg-5 d-none d-lg-flex justify-content-end">
         <div class="hero-aside">
