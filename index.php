@@ -1,6 +1,6 @@
 
 <?php
-require 'database.php';
+require 'config.php';
 $services = $pdo->query('SELECT * FROM services')->fetchAll();
 $salon = [
     'nom'         => 'ChauveQuiPeut',
@@ -358,7 +358,7 @@ $services = [
           <em>de confiance</em>
         </h1>
         <a href="#services" class="btn btn-rdv me-3">Voir les prestations</a>
-        <a href="reservation.php" class="btn btn-rdv" style="background:var(--gold);">Prendre RDV</a>
+        <a href="ajouter-reservation.php" class="btn btn-rdv" style="background:var(--gold);">Prendre RDV</a>
       </div>
       <div class="col-lg-5 d-none d-lg-flex justify-content-end">
         <div style="border: 1px solid #f0ebe4; padding: 32px; text-align:center;">
