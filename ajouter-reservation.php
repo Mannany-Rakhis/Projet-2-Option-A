@@ -3,8 +3,7 @@ require_once 'config.php';
 
 $message = "";
 
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if (isset($_POST['submit'])) {
 
     $nom = $_POST['nom'];
     $email = $_POST['email'];
@@ -55,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         ]);
 
-        $message = "Réservation enregistrée avec succès";
+        $message = "Réservation enregistrée";
 
     } catch (PDOException $e) {
 
@@ -66,143 +65,85 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <title>Réservation</title>
-
+    <title>Créer une réservation</title>
 </head>
-
 <body>
 
 <h1>Nouvelle réservation</h1>
 
 <?php if (!empty($message)) : ?>
-
     <p><?= $message ?></p>
-
 <?php endif; ?>
 
-<form method="POST" id="reservationForm">
+<form method="POST">
 
-    <input
-        type="text"
-        name="nom"
-        placeholder="Nom"
-        required
-    >
-
+    <input type="text" name="nom" placeholder="Nom" required>
     <br><br>
 
-    <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        required
-    >
-
+    <input type="email" name="email" placeholder="Email" required>
     <br><br>
 
-    <input
-        type="text"
-        name="telephone"
-        placeholder="Téléphone"
-        required
-    >
-
+    <input type="text" name="telephone" placeholder="Téléphone" required>
     <br><br>
 
-    <input
-        type="date"
-        name="date"
-        required
-    >
-
+    <input type="date" name="date" required>
     <br><br>
 
-    <input
-        type="time"
-        name="heure"
-        required
-    >
-
+    <input type="time" name="heure" required>
     <br><br>
-
-    <!-- SERVICES -->
 
     <label>Service :</label>
 
     <select name="service" required>
 
-        <option value="">
-            Choisir un service
-        </option>
+        <option value="">Choisir</option>
 
         <?php
 
-        $services = $pdo->query(
-            "SELECT * FROM services"
-        );
+        $services = $pdo->query("SELECT * FROM services");
 
-        while ($row = $services->fetch(PDO::FETCH_ASSOC)) :
+        while ($row = $services->fetch(PDO::FETCH_ASSOC)) {
+
+            echo '<option value="'.$row['Id_services'].'">'
+            .$row['nom'].
+            '</option>';
+        }
 
         ?>
-
-            <option value="<?= $row['Id_services'] ?>">
-
-                <?= $row['nom'] ?>
-
-            </option>
-
-        <?php endwhile; ?>
 
     </select>
 
     <br><br>
-
-    <!-- DISPONIBILITÉS -->
 
     <label>Disponibilité :</label>
 
     <select name="disponibilite" required>
 
-        <option value="">
-            Choisir une disponibilité
-        </option>
+        <option value="">Choisir</option>
 
         <?php
 
-        $dispos = $pdo->query(
-            "SELECT * FROM disponibilites
-             WHERE actif = 1"
-        );
+        $dispos = $pdo->query("SELECT * FROM disponibilites WHERE actif = 1");
 
-        while ($row = $dispos->fetch(PDO::FETCH_ASSOC)) :
+        while ($row = $dispos->fetch(PDO::FETCH_ASSOC)) {
+
+            echo '<option value="'.$row['Id_disponibilites'].'">'
+            .$row['jour_semaine'].' - '.
+            $row['heure_debut'].' / '.
+            $row['heure_fin'].
+            '</option>';
+        }
 
         ?>
-
-            <option value="<?= $row['Id_disponibilites'] ?>">
-
-                <?= $row['jour_semaine'] ?>
-                -
-                <?= $row['heure_debut'] ?>
-                /
-                <?= $row['heure_fin'] ?>
-
-            </option>
-
-        <?php endwhile; ?>
 
     </select>
 
     <br><br>
 
-    <button type="submit">
-
+    <button type="submit" name="submit">
         Réserver
-
     </button>
 
 </form>
