@@ -80,147 +80,71 @@ include 'includes/header.php';
 <link rel="stylesheet" href="css/ajouter-reservation.css">
 
 <main class="reservation-container">
+  <h2 class="reservation-title">Nouvelle réservation</h2>
+  <p class="reservation-subtitle">Ajoutez une réservation pour un client.</p>
 
-    <h2 class="reservation-title">Nouvelle réservation</h2>
-    <p class="reservation-subtitle">
-        Ajoutez une réservation pour un client.
-    </p>
+  <div class="reservation-card">
+    <?php if ($erreurs): ?>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <?php foreach ($erreurs as $e): ?>
+            <li><?= htmlspecialchars($e) ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php endif; ?>
 
-    <div class="reservation-card">
-
-        <?php if ($erreurs): ?>
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    <?php foreach ($erreurs as $e): ?>
-                        <li><?= htmlspecialchars($e) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <form method="post" novalidate>
-
-            <div class="row g-3">
-
-                <div class="col-md-6">
-                    <label for="date_rdv" class="form-label">Date</label>
-                    <input type="date"
-                           id="date_rdv"
-                           name="date_rdv"
-                           class="form-control"
-                           value="<?= htmlspecialchars($date_rdv) ?>"
-                           required>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="heure_rdv" class="form-label">Heure</label>
-                    <input type="time"
-                           id="heure_rdv"
-                           name="heure_rdv"
-                           class="form-control"
-                           value="<?= htmlspecialchars(substr($heure_rdv,0,5)) ?>"
-                           required>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="nom_client" class="form-label">Nom du client</label>
-                    <input type="text"
-                           id="nom_client"
-                           name="nom_client"
-                           class="form-control"
-                           value="<?= htmlspecialchars($nom_client) ?>"
-                           maxlength="50"
-                           required>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="telephone" class="form-label">
-                        Téléphone (10 chiffres)
-                    </label>
-                    <input type="tel"
-                           id="telephone"
-                           name="telephone"
-                           class="form-control"
-                           value="<?= htmlspecialchars($telephone) ?>"
-                           pattern="\d{10}"
-                           maxlength="10"
-                           required>
-                </div>
-
-                <div class="col-12">
-                    <label for="email_client" class="form-label">Email</label>
-                    <input type="email"
-                           id="email_client"
-                           name="email_client"
-                           class="form-control"
-                           value="<?= htmlspecialchars($email_client) ?>"
-                           maxlength="255"
-                           required>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="Id_services" class="form-label">Service</label>
-
-                    <select id="Id_services"
-                            name="Id_services"
-                            class="form-select"
-                            required>
-
-                        <option value="">-- Choisir un service --</option>
-
-                        <?php foreach ($services as $s): ?>
-                            <option value="<?= (int)$s['Id_services'] ?>"
-                                <?= ((int)$s['Id_services'] === $Id_services) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($s['nom']) ?>
-                            </option>
-                        <?php endforeach; ?>
-
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="Id_disponibilites" class="form-label">
-                        Créneau (jour)
-                    </label>
-
-                    <select id="Id_disponibilites"
-                            name="Id_disponibilites"
-                            class="form-select"
-                            required>
-
-                        <option value="">-- Choisir un créneau --</option>
-
-                        <?php foreach ($disponibilites as $d): ?>
-                            <option value="<?= (int)$d['Id_disponibilites'] ?>"
-                                <?= ((int)$d['Id_disponibilites'] === $Id_disponibilites) ? 'selected' : '' ?>>
-
-                                <?= htmlspecialchars($d['jour_semaine']) ?>
-
-                                (<?= htmlspecialchars(substr($d['heure_debut'],0,5)) ?>
-                                –<?= htmlspecialchars(substr($d['heure_fin'],0,5)) ?>)
-
-                            </option>
-                        <?php endforeach; ?>
-
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="reservation-actions">
-                <button type="submit" class="btn btn-primary">
-                    Créer la réservation
-                </button>
-
-                <a href="reservations.php" class="btn btn-secondary">
-                    Annuler
-                </a>
-            </div>
-
-        </form>
-
-    </div>
-
+    <form method="post" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="date_rdv" class="form-label">Date</label>
+          <input type="date" id="date_rdv" name="date_rdv" class="form-control" value="<?= htmlspecialchars($date_rdv) ?>" required>
+        </div>
+        <div class="col-md-6">
+          <label for="heure_rdv" class="form-label">Heure</label>
+          <input type="time" id="heure_rdv" name="heure_rdv" class="form-control" value="<?= htmlspecialchars(substr($heure_rdv,0,5)) ?>" required>
+        </div>
+        <div class="col-md-6">
+          <label for="nom_client" class="form-label">Nom du client</label>
+          <input type="text" id="nom_client" name="nom_client" class="form-control" value="<?= htmlspecialchars($nom_client) ?>" maxlength="50" required>
+        </div>
+        <div class="col-md-6">
+          <label for="telephone" class="form-label">Téléphone (10 chiffres)</label>
+          <input type="tel" id="telephone" name="telephone" class="form-control" value="<?= htmlspecialchars($telephone) ?>" pattern="\d{10}" maxlength="10" required>
+        </div>
+        <div class="col-12">
+          <label for="email_client" class="form-label">Email</label>
+          <input type="email" id="email_client" name="email_client" class="form-control" value="<?= htmlspecialchars($email_client) ?>" maxlength="255" required>
+        </div>
+        <div class="col-md-6">
+          <label for="Id_services" class="form-label">Service</label>
+          <select id="Id_services" name="Id_services" class="form-select" required>
+            <option value="">-- Choisir un service --</option>
+            <?php foreach ($services as $s): ?>
+              <option value="<?= (int)$s['Id_services'] ?>" <?= ((int)$s['Id_services'] === $Id_services) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($s['nom']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="Id_disponibilites" class="form-label">Créneau (jour)</label>
+          <select id="Id_disponibilites" name="Id_disponibilites" class="form-select" required>
+            <option value="">-- Choisir un créneau --</option>
+            <?php foreach ($disponibilites as $d): ?>
+              <option value="<?= (int)$d['Id_disponibilites'] ?>" <?= ((int)$d['Id_disponibilites'] === $Id_disponibilites) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($d['jour_semaine']) ?> (<?= htmlspecialchars(substr($d['heure_debut'],0,5)) ?>–<?= htmlspecialchars(substr($d['heure_fin'],0,5)) ?>)
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      </div>
+      <div class="reservation-actions">
+        <button type="submit" class="btn btn-primary">Créer la réservation</button>
+        <a href="reservations.php" class="btn btn-secondary">Annuler</a>
+      </div>
+    </form>
+  </div>
 </main>
 
 <?php include 'includes/footer.php'; ?>
